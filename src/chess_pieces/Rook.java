@@ -35,5 +35,9 @@ public class Rook extends Piece {
 			return "BR";
 		}
 	}
+	
+	public Piece clone(){
+		return new Rook(black_white);
+	}
 
 }

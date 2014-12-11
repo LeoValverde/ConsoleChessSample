@@ -26,5 +26,9 @@ public class Knight extends Piece {
 			return "Bk";
 		}
 	}
+	
+	public Piece clone(){
+		return new Knight(black_white);
+	}
 
 }

@@ -33,5 +33,9 @@ public class Bishop extends Piece {
 			return "BB";
 		}
 	}
+	
+	public Piece clone(){
+		return new Bishop(black_white);
+	}
 
 }

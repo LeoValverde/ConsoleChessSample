@@ -56,7 +56,7 @@ public class Game {
 			y2 = Integer.valueOf(in.readLine());
 			String moveResult = board.checkMove(x1,y1,x2,y2,black_white_turn, Boolean.TRUE);
 			if (moveResult == null) {
-				board.applyMove(x1,y1,x2,y2);
+				board.getPiece(x1,y1).applyMove(board,x1,y1,x2,y2);
 			}
 			return moveResult;
 		} catch (IOException e) {
@@ -67,7 +67,45 @@ public class Game {
 	}
 	
 	public void changeTurn(){
+		//After you play, you lose the right to use the EnPassant move over all Pawns of your enemy...
+		board.clearEnPassingAllows(!black_white_turn);
+		
+		//Check if there is some Pawn promotion to be made
+		if (board.checkForPromotionAvaliable(black_white_turn)){
+			
+			board.printBoard();
+			System.out.println("You got a promotion!");
+			
+			//Asks the user to type the Piece to promote
+			int selectedPiece = choosePieceForPromotion();
+			
+			//Try again if the player inputed an invalid value
+			while (!board.applyPromotion(selectedPiece, black_white_turn)){
+				System.out.println("Invalid choice. Please select a valid number...");
+				selectedPiece = choosePieceForPromotion();
+			}
+		};
+		//Changes the turn
 		black_white_turn = !black_white_turn;
+	}
+	
+	//Asks the user to type the Piece to promote
+	private Integer choosePieceForPromotion(){
+		System.out.println("Choose the promotion:");
+		System.out.println("1 - Queen");
+		System.out.println("2 - Rook");
+		System.out.println("3 - Bishop");
+		System.out.println("4 - Knight");
+		System.out.print("Your choice: ");
+		
+		Integer result = 0;
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in)); 
+		try {
+			result = Integer.valueOf(in.readLine());
+		}
+		catch (NumberFormatException e) {}
+		catch (IOException e) {};
+		return result;
 	}
 	
 	public static void main(String[] args) {

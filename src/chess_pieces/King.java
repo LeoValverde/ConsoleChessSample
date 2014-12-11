@@ -24,4 +24,8 @@ public class King extends Piece {
 		}
 	}
 	
+	public Piece clone(){
+		return new King(black_white);
+	}
+	
 }

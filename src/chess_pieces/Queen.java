@@ -45,5 +45,9 @@ public class Queen extends Piece {
 			return "BQ";
 		}
 	}
+	
+	public Piece clone(){
+		return new Queen(black_white);
+	}
 
 }

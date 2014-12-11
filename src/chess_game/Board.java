@@ -3,12 +3,13 @@ package chess_game;
 import chess_pieces.Bishop;
 import chess_pieces.King;
 import chess_pieces.Knight;
+import chess_pieces.Pawn;
 import chess_pieces.Piece;
 import chess_pieces.Queen;
 import chess_pieces.Rook;
 
 public class Board {
-	private Piece[][] boardArray;
+	public Piece[][] boardArray;
 	
 	// Board constructor
 	public Board(){
@@ -16,7 +17,7 @@ public class Board {
 		boardArray = new Piece [8][8];
 		
 		// Positioning pieces at the board 
-		// TODO - Create more pieces
+		
 		boardArray[0][0] = new Rook(Boolean.FALSE);
 		boardArray[1][0] = new Knight(Boolean.FALSE);
 		boardArray[2][0] = new Bishop(Boolean.FALSE);
@@ -26,6 +27,15 @@ public class Board {
 		boardArray[6][0] = new Knight(Boolean.FALSE);
 		boardArray[7][0] = new Rook(Boolean.FALSE);
 		
+		boardArray[0][1] = new Pawn(Boolean.FALSE);
+		boardArray[1][1] = new Pawn(Boolean.FALSE);
+		boardArray[2][1] = new Pawn(Boolean.FALSE);
+		boardArray[3][1] = new Pawn(Boolean.FALSE);
+		boardArray[4][1] = new Pawn(Boolean.FALSE);
+		boardArray[5][1] = new Pawn(Boolean.FALSE);
+		boardArray[6][1] = new Pawn(Boolean.FALSE);
+		boardArray[7][1] = new Pawn(Boolean.FALSE);
+		
 		boardArray[0][7] = new Rook(Boolean.TRUE);
 		boardArray[1][7] = new Knight(Boolean.TRUE);
 		boardArray[2][7] = new Bishop(Boolean.TRUE);
@@ -34,6 +44,15 @@ public class Board {
 		boardArray[5][7] = new Bishop(Boolean.TRUE);
 		boardArray[6][7] = new Knight(Boolean.TRUE);
 		boardArray[7][7] = new Rook(Boolean.TRUE);
+		
+		boardArray[0][6] = new Pawn(Boolean.TRUE);
+		boardArray[1][6] = new Pawn(Boolean.TRUE);
+		boardArray[2][6] = new Pawn(Boolean.TRUE);
+		boardArray[3][6] = new Pawn(Boolean.TRUE);
+		boardArray[4][6] = new Pawn(Boolean.TRUE);
+		boardArray[5][6] = new Pawn(Boolean.TRUE);
+		boardArray[6][6] = new Pawn(Boolean.TRUE);
+		boardArray[7][6] = new Pawn(Boolean.TRUE);
 	}
 	
 	public Piece getPiece(Integer x, Integer y){
@@ -48,14 +67,11 @@ public class Board {
 		// Setting up the board;
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
-				boardArray[x][y] = boardArrayInput[x][y];
+				if (boardArrayInput[x][y] != null){
+					boardArray[x][y] = boardArrayInput[x][y].clone();
+				}
 			}
 	    }
-	}
-	
-	public void applyMove(Integer x1, Integer y1, Integer x2, Integer y2){
-		boardArray[x2][y2]= boardArray[x1][y1];
-		boardArray[x1][y1] = null;
 	}
 	
 	public String checkMove(Integer x1, Integer y1, Integer x2, Integer y2, Boolean black_white_turn, Boolean verifyCheck){
@@ -73,16 +89,16 @@ public class Board {
 		if (movingPiece.black_white != black_white_turn){ return "The piece at (" + x1 + "," + y1 + ") is not yours!"; };
 		
 		// Check if the Piece can move to this location
-		if (!movingPiece.isValidMove(this, x1,y1,x2,y2)){ return "The piece cant move to (" + x2 + "," + y2 + ")"; };
+		if (!movingPiece.isValidMove(this, x1,y1,x2,y2)){ return "The piece can't move to (" + x2 + "," + y2 + ")"; };
 		
 		// Check if the player is attempting to attack himself
 		Piece targetPiece = boardArray[x2][y2];
-		if ((targetPiece != null) && targetPiece.black_white == black_white_turn){ return "You cant kill your Pieces!"; };
+		if ((targetPiece != null) && targetPiece.black_white == black_white_turn){ return "You can't kill your Pieces!"; };
 		
 		if (verifyCheck){
 			// Check if the new scenario is a check against the current player
 			Board testingScnarioBoard = new Board(boardArray);
-			testingScnarioBoard.applyMove(x1, y1, x2, y2);
+			testingScnarioBoard.getPiece(x1, y1).applyMove(testingScnarioBoard,x1, y1, x2, y2);
 			if (testingScnarioBoard.isInCheck(movingPiece.black_white)) { return "You can't let the king in danger!"; };	
 		}
 		
@@ -154,6 +170,56 @@ public class Board {
 			}
 			System.out.println(line);
 	    }
+	}
+	
+	public void clearEnPassingAllows(Boolean black_white){
+		for (int x = 0; x < 8; x++) {
+			for (int y = 0; y < 8; y++) {
+				if(
+					boardArray[x][y] != null
+					&& boardArray[x][y].black_white == black_white
+					&& (boardArray[x][y] instanceof Pawn)
+				){
+					((Pawn)boardArray[x][y]).liableOfCaptureBy_EnPassant = Boolean.FALSE;
+				}
+			}
+	    }
+	}
+	
+	public Boolean checkForPromotionAvaliable(Boolean black_white){
+		int y;
+		if (black_white){ y = 0; }
+		else { y = 7; };
+		for (int x = 0; x < 8; x++) {
+			if(
+					boardArray[x][y] != null
+					&& boardArray[x][y].black_white == black_white
+					&& (boardArray[x][y] instanceof Pawn)
+			){
+				return Boolean.TRUE;
+			}
+	    }
+		return Boolean.FALSE;
+	}
+	
+	public Boolean applyPromotion(int selectedPiece, Boolean black_white){
+		int y;
+		if (black_white){ y = 0; }
+		else { y = 7; };
+		for (int x = 0; x < 8; x++) {
+			if(
+					boardArray[x][y] != null
+					&& boardArray[x][y].black_white == black_white
+					&& (boardArray[x][y] instanceof Pawn)
+			){
+				if (selectedPiece == 1){ boardArray[x][y] = new Queen(black_white); }
+				else if (selectedPiece == 2){ boardArray[x][y] = new Rook(black_white); }
+				else if (selectedPiece == 3){ boardArray[x][y] = new Bishop(black_white); }
+				else if (selectedPiece == 4){ boardArray[x][y] = new Knight(black_white); }
+				else { return Boolean.FALSE; };
+			}
+	    }
+		return Boolean.TRUE;
 	}
 	
 }
