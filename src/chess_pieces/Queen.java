@@ -8,11 +8,11 @@ public class Queen extends Piece {
 		super(black_white);
 	}
 
-	public Boolean isValidMove(Board board, Integer x1, Integer y1, Integer x2, Integer y2){
+	public String isValidMove(Board board, Integer x1, Integer y1, Integer x2, Integer y2){
 		String KindOfMove = "None";
 		if((x1-x2 == 0) || (y1-y2 == 0)){ KindOfMove = "Rook"; }
 		if(Math.abs(x1-x2) == Math.abs(y1-y2)){ KindOfMove = "Bishop"; }
-		if (KindOfMove == "None") { return Boolean.FALSE; }
+		if (KindOfMove == "None") { return "INVALID"; }
 
 		Integer stepBeforeX;
 		Integer stepBeforeY;
@@ -32,9 +32,9 @@ public class Queen extends Piece {
 		
 		Piece pieceStepBefore = board.getPiece(stepBeforeX, stepBeforeY);
 		
-		if (pieceStepBefore == this){ return Boolean.TRUE; }
+		if (pieceStepBefore == this){ return "VALID"; }
 		if (pieceStepBefore == null){ return isValidMove(board,x1,y1,stepBeforeX,stepBeforeY); }
-		return Boolean.FALSE;
+		return "INVALID";
 	}
 	
 	public String identify(){

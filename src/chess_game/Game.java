@@ -17,12 +17,14 @@ public class Game {
 		black_white_turn = Boolean.TRUE;
 	}
 	
+	//Start the next turn
 	public void playTurn(){
 		board.printBoard();
 		if(board.isInCheck(black_white_turn)){ System.out.println("CHECK!"); }
 		printTurn();
 		
 		String moveResult;
+		//Keeps looping until the player type a valid move
 		while(Boolean.TRUE){
 			moveResult = inputMove();
 			if(moveResult != null){
@@ -34,6 +36,7 @@ public class Game {
 		};
 	}
 	
+	//Prints a message informing the current player
 	public void printTurn(){
 		if (black_white_turn){
 			System.out.println("White plays now...");
@@ -42,6 +45,7 @@ public class Game {
 		}
 	}
 	
+	//Asks the user to type the move, returning the result of the moving attempt
 	public String inputMove(){
 		Integer x1, x2, y1, y2;
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in)); 
@@ -54,11 +58,10 @@ public class Game {
 			x2 = Integer.valueOf(in.readLine());
 			System.out.print("Destination Y: "); 
 			y2 = Integer.valueOf(in.readLine());
-			String moveResult = board.checkMove(x1,y1,x2,y2,black_white_turn, Boolean.TRUE);
-			if (moveResult == null) {
-				board.getPiece(x1,y1).applyMove(board,x1,y1,x2,y2);
-			}
-			return moveResult;
+			
+			//Try to execute the move asked by the user. Returns error if it's not possible to do it.
+			return board.move(x1,y1,x2,y2,black_white_turn);
+			
 		} catch (IOException e) {
 			return e.getMessage();
 		} catch (NumberFormatException e){
@@ -109,23 +112,30 @@ public class Game {
 	}
 	
 	public static void main(String[] args) {
+		//Creates a new chess game
 		Game game = new Game();
+		
+		//Playes the next turn while is possible to the player to make some move
 		while(!game.board.noPossibleMove(game.black_white_turn)){
 			game.playTurn();
 			game.changeTurn();
 		}
+		
+		//When the player can not move any piece...
 		game.board.printBoard();
 		game.printTurn();
+		//Check if he is in check (checkmate) or if he is not (stalemate, which configures a draw)
 		if(game.board.isInCheck(game.black_white_turn)){
 			if (game.black_white_turn){
-				System.out.println("CHECKMATE!!! WHITE WINS!");
-			} else {
 				System.out.println("CHECKMATE!!! BLACK WINS!");
+			} else {
+				System.out.println("CHECKMATE!!! WHITE WINS!");
 			}
 		} else {
 			System.out.println("This game is over. It's a DRAW!");
 		}
 		
+		//Wait 5 seconds to leave the game, giving time to the user to read the result
 		try {
 		    Thread.sleep(5000);
 		} catch(InterruptedException ex) {

@@ -8,8 +8,8 @@ public class Bishop extends Piece {
 		super(black_white);
 	}
 
-	public Boolean isValidMove(Board board, Integer x1, Integer y1, Integer x2, Integer y2){
-		if(Math.abs(x1-x2) != Math.abs(y1-y2)){ return Boolean.FALSE; }
+	public String isValidMove(Board board, Integer x1, Integer y1, Integer x2, Integer y2){
+		if(Math.abs(x1-x2) != Math.abs(y1-y2)){ return "INVALID"; }
 		
 		Integer stepBeforeX;
 		Integer stepBeforeY;
@@ -20,9 +20,9 @@ public class Bishop extends Piece {
 		
 		Piece pieceStepBefore = board.getPiece(stepBeforeX, stepBeforeY);
 		
-		if (pieceStepBefore == this){ return Boolean.TRUE; }
+		if (pieceStepBefore == this){ return "VALID"; }
 		if (pieceStepBefore == null){ return isValidMove(board,x1,y1,stepBeforeX,stepBeforeY); }
-		return Boolean.FALSE;
+		return "INVALID";
 	}
 	
 	public String identify(){

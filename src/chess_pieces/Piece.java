@@ -12,13 +12,10 @@ public abstract class Piece {
 	}
 
 	// Iterates over the board to check if this piece can move from (x1,y1) to (x2,y2)
-	public abstract Boolean isValidMove(Board board, Integer x1, Integer y1, Integer x2, Integer y2);
+	public abstract String isValidMove(Board board, Integer x1, Integer y1, Integer x2, Integer y2);
 	
-	// Moves this piece can move from (x1,y1) to (x2,y2)
-	public void applyMove(Board board, Integer x1, Integer y1, Integer x2, Integer y2) {
-		board.boardArray[x2][y2]= board.boardArray[x1][y1];
-		board.boardArray[x1][y1] = null;
-	}
+	//Tells the piece that it was moved from (x1,y1) to (x2,y2)
+	public void moved(Board board, Integer x1, Integer y1, Integer x2, Integer y2) {}
 	
 	//Returns the string that identify the piece on the board
 	public abstract String identify();
